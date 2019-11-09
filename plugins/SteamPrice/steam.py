@@ -4,6 +4,11 @@ from lxml import etree
 from nonebot import on_command, CommandSession
 import asyncio
 
+'''
+根据游戏id从https://steamdb.info/爬取数据
+暂时不能直接输入游戏名，只能输入游戏id
+'''
+
 
 @on_command('steam', aliases=('史低',), only_to_me=False)
 async def price(session: CommandSession):
