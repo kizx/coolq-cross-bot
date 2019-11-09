@@ -1,0 +1,7 @@
+nonebot
+urllib3
+lxml
+beautifulsoup4
+requests
+msgpack
+ujson
