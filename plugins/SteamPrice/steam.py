@@ -7,8 +7,10 @@ import asyncio
 
 @on_command('steam', aliases=('史低',), only_to_me=False)
 async def price(session: CommandSession):
+    user_id = session.ctx.get('user_id')
     game_id = session.get('game_id', prompt='请输入游戏id')
     msg = await get_price(game_id)
+    msg = f'[CQ:at, qq = {user_id}]' + '\n' + msg
     await session.send(msg)
 
 
