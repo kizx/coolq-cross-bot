@@ -1,8 +1,29 @@
 import requests
 import base64
+from nonebot import on_command, CommandSession
+import asyncio
 
 
-def msg_port(msg):
+@on_command('timeji', aliases=('说说','时光鸡','时光机','时光姬','动态'), only_to_me=False)
+async def timeji(session: CommandSession):
+    game_id = session.get('text', prompt='请继续输入')
+    text = await msg_port(game_id)
+    await session.send(text)
+
+
+@timeji.args_parser
+async def _(session: CommandSession):
+    stripped_arg = session.current_arg_text.strip()
+    if session.is_first_run:
+        if stripped_arg:
+            session.state['game_id'] = stripped_arg
+        return
+    if not stripped_arg:
+        session.pause('要查询的游戏id不能为空呢，请重新输入')
+    session.state[session.current_key] = stripped_arg
+
+
+async def msg_port(msg):
     """发送消息，包括文字、图片、混合消息"""
     url = 'https://www.2bboy.com/'
     data = {'token': 'qq',
