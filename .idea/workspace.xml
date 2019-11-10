@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="7c9f6375-7c75-4846-a97f-ef7f49d27fb5" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/plugins/handsome/timecode.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/plugins/SteamPrice/steam.py" beforeDir="false" afterPath="$PROJECT_DIR$/plugins/SteamPrice/steam.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/plugins/handsome/timecode.py" beforeDir="false" afterPath="$PROJECT_DIR$/plugins/handsome/timecode.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -145,7 +145,7 @@
       <workItem from="1573289032948" duration="267000" />
       <workItem from="1573289394860" duration="12096000" />
       <workItem from="1573371039313" duration="190000" />
-      <workItem from="1573371360919" duration="3166000" />
+      <workItem from="1573371360919" duration="10780000" />
     </task>
     <servers />
   </component>
@@ -168,7 +168,7 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/nonebot$bot.coverage" NAME="bot Coverage Results" MODIFIED="1573288825491" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/nonebot$steam.coverage" NAME="steam Coverage Results" MODIFIED="1573288478190" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/plugins/SteamPrice" />
-    <SUITE FILE_PATH="coverage/coolq_cross_bot$timecode.coverage" NAME="timecode Coverage Results" MODIFIED="1573376259394" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/plugins/handsome" />
+    <SUITE FILE_PATH="coverage/coolq_cross_bot$timecode.coverage" NAME="timecode Coverage Results" MODIFIED="1573384995167" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/plugins/handsome" />
     <SUITE FILE_PATH="coverage/coolq_cross_bot$bot.coverage" NAME="bot Coverage Results" MODIFIED="1573375842387" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/coolq_cross_bot$steam.coverage" NAME="steam Coverage Results" MODIFIED="1573295644486" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/plugins/SteamPrice" />
   </component>
