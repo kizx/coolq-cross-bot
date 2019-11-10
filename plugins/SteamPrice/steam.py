@@ -7,6 +7,8 @@ import asyncio
 '''
 根据游戏id从https://steamdb.info/爬取数据
 暂时不能直接输入游戏名，只能输入游戏id
+需要先更改cookie
+偶尔会抽风
 '''
 
 
