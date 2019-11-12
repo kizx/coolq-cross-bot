@@ -1,12 +1,21 @@
 import requests
 import base64
 from nonebot import on_command, CommandSession
+import os
 
 
-@on_command('timeji', aliases=('时光鸡', '时光机', '时光姬', '动态', '说说'), only_to_me=False)
+@on_command('timeji', aliases=('时光鸡', '时光机', '时光姬', '动态', '说说'))
 async def timeji(session: CommandSession):
     msg = session.get('msg', prompt='请继续输入')
-    print('总输出', msg)
+    print('输出', msg)
+    if not msg:
+        await session.send('消息为空,图片可能获取失败')
+        path = r'C:\Users\ZXIN\Desktop\something\酷Q Air_开发\data\image'
+        if os.path.exists(path):
+            for i in os.listdir(path):
+                os.remove(os.path.join(path, i))
+            await session.send('已清除所有图片缓存，请重新发送')
+        return
     qq_response = await msg_port(msg)
     await session.send(qq_response)
 
@@ -17,18 +26,19 @@ async def _(session: CommandSession):
     text = session.current_arg_text.strip()
     img_url = session.current_arg_images
     img_list = [img_port(url) for url in img_url]
-    img = '\n'.join(img_list)
+    img_list.insert(0, text)
+    msg = '\n'.join(img_list)
     if session.is_first_run:
         if stripped_arg:
-            session.state['msg'] = text + '\n' + img
+            session.state['msg'] = msg
         return
     if not stripped_arg:
         session.pause('输入不能为空呢，请重新输入')
-    session.state[session.current_key] = text + '\n' + img
+    session.state[session.current_key] = msg
 
 
 async def msg_port(msg):
-    """发送消息，包括文字、图片、混合消息"""
+    """上传消息，包括文字、图片、混合消息"""
 
     url = 'https://www.2bboy.com/'
     data = {'token': 'qq',
@@ -39,7 +49,7 @@ async def msg_port(msg):
             'cid': '32',
             'action': 'send_talk'}
     response = requests.post(url, data)
-    if response.status_code == 200:
+    if response.status_code == 200 and response.text == '1':
         return 'biubiubiu~发送成功'
     else:
         return '发送失败惹~'
