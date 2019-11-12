@@ -8,10 +8,10 @@ __plugin_usage__ = '测试 命令'
 @on_command('test', aliases=('测试',), only_to_me=False)
 async def test(session: CommandSession):
     text = session.get('text', prompt='请继续输入')
-    print(text)
-    print(session.current_arg)
-    print(session.current_arg_images)
-    await session.send(str(text))
+    print('输出',text)
+    print('输出',session.current_arg)
+    print('输出',str(session.current_arg_images[0]))
+    await session.send(str(session.current_arg_images[0]),at_sender=True)
 
 
 @test.args_parser
