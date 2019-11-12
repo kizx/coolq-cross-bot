@@ -7,7 +7,13 @@ import asyncio
 '''
 根据游戏id从https://steamdb.info/爬取数据
 暂时不能直接输入游戏名，只能输入游戏id
+需要先更改cookie
+偶尔会抽风
 '''
+steamdb_cookie = '__cfduid=d97664c7d4b36da8b415925000caf28401573131878; ' \
+                 '_ga=GA1.2.2033167086.1573131896; ' \
+                 'cf_clearance=d4317cb87ce2a81b74ae638895d9686d50aa8a85-1573476694-0-250; ' \
+                 '_gid=GA1.2.2025674706.1573476701; _gat=1'
 
 
 @on_command('steam', aliases=('史低',), only_to_me=False)
@@ -35,7 +41,7 @@ async def get_price(game_id):
     url = f'https://steamdb.info/app/{game_id}/'
     headers = {'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.36',
-               'Cookie': '__cfduid=d97664c7d4b36da8b415925000caf28401573131878; _ga=GA1.2.2033167086.1573131896; cf_clearance=f1d22969108249a0039090d53e0f3737ef155d23-1573280698-0-250; _gid=GA1.2.977210132.1573280703; _gat=1'}
+               'Cookie': steamdb_cookie}
     urllib3.disable_warnings()
     response = requests.get(url, headers=headers, verify=False)
 
