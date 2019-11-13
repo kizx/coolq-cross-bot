@@ -9,5 +9,6 @@
                   
 
 ## 更新日志
+v2.1 添加时光鸡绑定功能
 v2.0 添加[handsome](https://www.ihewro.com/archives/489/)时光鸡功能  
 v1.0 添加steam游戏史低查询功能
