@@ -105,3 +105,5 @@ venv.bak/
 .idea/
 plugins/test.py
 .vscode/
+
+bind_info.sqlite
