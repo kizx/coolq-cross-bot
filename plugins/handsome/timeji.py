@@ -7,7 +7,7 @@ import sqlite3
 
 @on_command('timeji', aliases=('时光鸡', '时光机', '时光姬', '动态', '说说'))
 async def timeji(session: CommandSession):
-    msg = session.get('msg', prompt='请继续输入')
+    msg = session.get('msg', prompt='请输入内容')
     print('总输出', str(msg))
     if not msg:
         await session.send('消息为空,图片可能上传失败')
