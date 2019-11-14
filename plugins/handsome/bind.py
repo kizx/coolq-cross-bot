@@ -58,3 +58,9 @@ async def unbind(session: CommandSession):
         await session.send('解绑失败了')
     else:
         await session.send('解绑成功！')
+
+
+@on_command('helper', aliases=('帮助', '说明'))
+async def helper(session: CommandSession):
+    msg = '这里是帮助'
+    await session.send(msg)
