@@ -1,6 +1,6 @@
 from nonebot.default_config import *
 
-SUPERUSERS = {3317200497}
+SUPERUSERS = {}
 COMMAND_START = {'/', '!', '／', '！', '\\', ''}
 HOST = '127.0.0.1'
 PORT = 8080

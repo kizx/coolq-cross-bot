@@ -85,7 +85,8 @@ async def img_port(img_link, blog, time_code):
 async def send_msg(session, msg):
     if not msg:
         await session.send('消息为空,图片可能上传失败')
-        path = r'C:\Users\ZXIN\Desktop\something\酷Q Air_开发\data\image'
+        print(os.getcwd())
+        path = r'..\..\data\image'
         if os.path.exists(path):
             for i in os.listdir(path):
                 os.remove(os.path.join(path, i))
@@ -105,8 +106,8 @@ async def send_msg(session, msg):
         await session.send('[ERR02]你似乎还没有绑定呢~')
     else:
         # 判断是否是私密消息
-        if msg[0] == '%':
-            msg = msg.replace('%', '', 1)
+        if msg[0] == '#':
+            msg = msg.replace('#', '', 1)
             msg = f'[secret]{msg}[/secret]'
         qq_response = await msg_port(msg, blog, cid, time_code)
         await session.send(qq_response)
@@ -137,13 +138,4 @@ async def msg_hanle(session):
 
 
 if __name__ == '__main__':
-    conn = sqlite3.connect('../../bind_info.sqlite')
-    curs = conn.cursor()
-    # curs.execute('insert into user (qq, blog, cid, time_code) values(?,?,?,?)',
-    #              (123456, 'info[0]', 'info[1]', 'info[2])'))
-    curs.execute('select blog,cid,time_code from user where qq = ?', (3317200497,))
-    # (blog,cid,time_code) = curs.fetchone()
-    # print(blog,cid,time_code)
-    curs.close()
-    conn.commit()
-    conn.close()
+    pass
