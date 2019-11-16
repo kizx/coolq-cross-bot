@@ -1,21 +1,27 @@
 import requests
 import base64
 from nonebot import on_command, CommandSession
-import os
 import sqlite3
 
 
 @on_command('timeji', aliases=('时光鸡', '时光机', '时光姬', '动态', '说说'))
 async def timeji(session: CommandSession):
     msg = session.get('msg', prompt='请输入内容')
+    # print('这里是输出：', msg)
     await send_msg(session, msg)
 
 
 @timeji.args_parser
 async def _(session: CommandSession):
     stripped_arg = session.current_arg.strip()
-    msg_list = await msg_hanle(session)
-    msg = '\n'.join(msg_list)
+    text, imgs = await msg_handle(session)
+    msg = []
+    if text:
+        msg.append(text)
+    if imgs:
+        imgs = f'[album]{imgs}[/album]'
+        msg.append(imgs)
+    msg = '\n'.join(msg)
     if session.is_first_run:
         if stripped_arg:
             session.state['msg'] = msg
@@ -27,21 +33,40 @@ async def _(session: CommandSession):
 
 @on_command('multi', aliases=('开始',))
 async def multi(session: CommandSession):
+    session.state['texts'] = []
+    session.state['imgs'] = []
     msg = session.get('msg', prompt='进入混合输入模式，请输入内容')
-    msg = '\n'.join(msg)
+    # print('这里是输出：', msg)
     await send_msg(session, msg)
 
 
 @multi.args_parser
 async def _(session: CommandSession):
+    stripped_arg = session.current_arg.strip()
     if session.is_first_run:
-        session.state['msg'] = []
+        return
+    if not stripped_arg:
+        session.pause('输入不能为空呢，请重新输入')
     text = session.current_arg_text
-    if text != '结束':
-        msg = await msg_hanle(session)
-        session.state['msg'] += msg
-        print(session.state['msg'])
+    if text != '结束' and text != '取消':
+        text, imgs = await msg_handle(session)
+        if text:
+            session.state['texts'].append(text)
+        if imgs:
+            session.state['imgs'].append(imgs)
         session.pause('请继续输入')
+    elif text == '结束':
+        imgs = session.state['imgs']
+        if imgs:
+            imgs = ''.join(imgs)
+            imgs = [f'[album]{imgs}[/album]']
+        msg = session.state['texts'] + imgs
+        msg = '\n'.join(msg)
+        session.state[session.current_key] = msg
+        return
+    elif text == '取消':
+        session.state[session.current_key] = []
+        return
 
 
 async def msg_port(msg, blog, cid, time_code):
@@ -77,20 +102,14 @@ async def img_port(img_link, blog, time_code):
     response = requests.post(url, data)
     if response.status_code == 200 and response.json().get('status') == '1':
         img_url = response.json().get('data').replace('\\', '')
-        return f"<img src='{img_url}' />"
+        return f'<img src="{img_url}"/>'
     else:
         return '图片上传失败惹~'
 
 
 async def send_msg(session, msg):
     if not msg:
-        await session.send('消息为空,图片可能上传失败')
-        print(os.getcwd())
-        path = r'..\..\data\image'
-        if os.path.exists(path):
-            for i in os.listdir(path):
-                os.remove(os.path.join(path, i))
-            await session.send('已清除所有图片缓存，请重新发送')
+        await session.send('消息为空,已取消上传')
         return
     try:
         con = sqlite3.connect('bind_info.sqlite')
@@ -113,12 +132,10 @@ async def send_msg(session, msg):
         await session.send(qq_response)
 
 
-async def msg_hanle(session):
+async def msg_handle(session):
     text = session.current_arg_text
     img_url = session.current_arg_images
-    msg_list = []
-    if text:
-        msg_list.append(text)
+    imgs = []
     if img_url:
         try:
             con = sqlite3.connect('bind_info.sqlite')
@@ -129,12 +146,12 @@ async def msg_hanle(session):
             con.commit()
             con.close()
             img_list = [await img_port(url, blog, time_code) for url in img_url]
-            msg_list = msg_list + img_list
+            imgs = ''.join(img_list)
         except sqlite3.OperationalError:
             await session.send('[ERR11]你似乎还没有绑定呢~')
         except (TypeError, AttributeError):
             await session.send('[ERR12]你的绑定信息似乎有问题呢~')
-    return msg_list
+    return [text, imgs]
 
 
 if __name__ == '__main__':
