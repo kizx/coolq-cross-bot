@@ -7,7 +7,6 @@ import sqlite3
 @on_command('timeji', aliases=('时光鸡', '时光机', '时光姬', '动态', '说说'))
 async def timeji(session: CommandSession):
     msg = session.get('msg', prompt='请输入内容')
-    # print('这里是输出：', msg)
     await send_msg(session, msg)
 
 
@@ -36,7 +35,6 @@ async def multi(session: CommandSession):
     session.state['texts'] = []
     session.state['imgs'] = []
     msg = session.get('msg', prompt='进入混合输入模式，请输入内容')
-    # print('这里是输出：', msg)
     await send_msg(session, msg)
 
 
@@ -88,6 +86,7 @@ async def msg_port(msg, blog, cid, time_code):
 
 async def img_port(img_link, blog, time_code):
     """上传图片并获得图片链接"""
+    print('图片下载...')
     response = requests.get(img_link)
     img_type = response.headers.get('Content-Type')
     base64_data = base64.b64encode(response.content).decode()
@@ -99,15 +98,20 @@ async def img_port(img_link, blog, time_code):
             'token': 'qq',
             'file': img_base64,
             'mediaId': '1'}
-    response = requests.post(url, data)
-    if response.status_code == 200 and response.json().get('status') == '1':
-        img_url = response.json().get('data').replace('\\', '')
-        return f'<img src="{img_url}"/>'
-    else:
-        return '图片上传失败惹~'
+    try:
+        print('图片上传...')
+        response = requests.post(url, data, timeout=3)
+        if response.status_code == 200 and response.json().get('status') == '1':
+            img_url = response.json().get('data').replace('\\', '')
+            return f'<img src="{img_url}"/>'
+        else:
+            return '图片上传失败惹~'
+    except requests.exceptions.RequestException:
+        return '上传超时'
 
 
 async def send_msg(session, msg):
+    print('输出：', msg)
     if not msg:
         await session.send('消息为空,已取消上传')
         return
