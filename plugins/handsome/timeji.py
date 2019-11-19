@@ -13,12 +13,15 @@ async def timeji(session: CommandSession):
 @timeji.args_parser
 async def _(session: CommandSession):
     stripped_arg = session.current_arg.strip()
-    text, imgs = await msg_handle(session)
+    text, img_list = await msg_handle(session)
     msg = []
     if text:
         msg.append(text)
-    if imgs:
-        imgs = f'[album]{imgs}[/album]'
+    if img_list:
+        print('测试', img_list)
+        imgs = '\n'.join(img_list)
+        if len(img_list) != 1:
+            imgs = f'[album]{imgs}[/album]'
         msg.append(imgs)
     msg = '\n'.join(msg)
     if session.is_first_run:
@@ -47,18 +50,20 @@ async def _(session: CommandSession):
         session.pause('输入不能为空呢，请重新输入')
     text = session.current_arg_text
     if text != '结束' and text != '取消':
-        text, imgs = await msg_handle(session)
+        text, img_list = await msg_handle(session)
         if text:
             session.state['texts'].append(text)
-        if imgs:
-            session.state['imgs'].append(imgs)
+        if img_list:
+            session.state['imgs'] += img_list
         session.pause('请继续输入')
     elif text == '结束':
-        imgs = session.state['imgs']
-        if imgs:
-            imgs = ''.join(imgs)
-            imgs = [f'[album]{imgs}[/album]']
-        msg = session.state['texts'] + imgs
+        img_list = session.state['imgs']
+        imgs = []
+        if img_list:
+            imgs = '\n'.join(img_list)
+            if len(img_list) != 1:
+                imgs = f'[album]{imgs}[/album]'
+        msg = session.state['texts'] + [imgs]
         msg = '\n'.join(msg)
         session.state[session.current_key] = msg
         return
@@ -86,7 +91,7 @@ async def msg_port(msg, blog, cid, time_code):
 
 async def img_port(img_link, blog, time_code):
     """上传图片并获得图片链接"""
-    print('图片下载...')
+    print('[图片下载]...')
     response = requests.get(img_link)
     img_type = response.headers.get('Content-Type')
     base64_data = base64.b64encode(response.content).decode()
@@ -98,20 +103,18 @@ async def img_port(img_link, blog, time_code):
             'token': 'qq',
             'file': img_base64,
             'mediaId': '1'}
-    try:
-        print('图片上传...')
-        response = requests.post(url, data, timeout=3)
-        if response.status_code == 200 and response.json().get('status') == '1':
-            img_url = response.json().get('data').replace('\\', '')
-            return f'<img src="{img_url}"/>'
-        else:
-            return '图片上传失败惹~'
-    except requests.exceptions.RequestException:
-        return '上传超时'
+    print('[图片上传]...')
+    response = requests.post(url, data)
+    if response.status_code == 200 and response.json().get('status') == '1':
+        img_url = response.json().get('data').replace('\\', '')
+        return f'<img src="{img_url}"/>'
+    else:
+        return '图片上传失败'
 
 
 async def send_msg(session, msg):
-    print('输出：', msg)
+    """消息发送前处理"""
+    print('[输出]', msg)
     if not msg:
         await session.send('消息为空,已取消上传')
         return
@@ -137,9 +140,10 @@ async def send_msg(session, msg):
 
 
 async def msg_handle(session):
+    """提取消息中的文字和图片"""
     text = session.current_arg_text
     img_url = session.current_arg_images
-    imgs = []
+    img_list = []
     if img_url:
         try:
             con = sqlite3.connect('bind_info.sqlite')
@@ -150,12 +154,11 @@ async def msg_handle(session):
             con.commit()
             con.close()
             img_list = [await img_port(url, blog, time_code) for url in img_url]
-            imgs = ''.join(img_list)
         except sqlite3.OperationalError:
             await session.send('[ERR11]你似乎还没有绑定呢~')
         except (TypeError, AttributeError):
             await session.send('[ERR12]你的绑定信息似乎有问题呢~')
-    return [text, imgs]
+    return [text, img_list]
 
 
 if __name__ == '__main__':
