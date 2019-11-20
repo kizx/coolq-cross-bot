@@ -18,8 +18,7 @@ async def _(session: CommandSession):
     if text:
         msg.append(text)
     if img_list:
-        print('测试', img_list)
-        imgs = '\n'.join(img_list)
+        imgs = ''.join(img_list)
         if len(img_list) != 1:
             imgs = f'[album]{imgs}[/album]'
         msg.append(imgs)
@@ -60,15 +59,16 @@ async def _(session: CommandSession):
         img_list = session.state['imgs']
         imgs = []
         if img_list:
-            imgs = '\n'.join(img_list)
+            imgs = ''.join(img_list)
             if len(img_list) != 1:
                 imgs = f'[album]{imgs}[/album]'
-        msg = session.state['texts'] + [imgs]
+            imgs = [imgs]
+        msg = session.state['texts'] + imgs
         msg = '\n'.join(msg)
         session.state[session.current_key] = msg
         return
     elif text == '取消':
-        session.state[session.current_key] = []
+        session.state[session.current_key] = ''
         return
 
 
