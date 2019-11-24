@@ -58,3 +58,21 @@ async def unbind(session: CommandSession):
         await session.send('解绑失败了')
     else:
         await session.send('解绑成功！')
+
+
+@on_command('blog', aliases=('博客', '网站'))
+async def _(session: CommandSession):
+    qq = session.ctx.get('user_id')
+    try:
+        con = sqlite3.connect('bind_info.sqlite')
+        cur = con.cursor()
+        cur.execute('select blog from user where qq = ?', (qq,))
+        blog = cur.fetchone()[0]
+        cur.close()
+        con.commit()
+        con.close()
+    except Exception as e:
+        await session.send('发生错误')
+    else:
+        msg = f"[CQ:share,url={blog}]"
+        await session.send(msg)
