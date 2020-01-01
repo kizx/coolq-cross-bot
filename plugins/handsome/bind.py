@@ -9,7 +9,8 @@ async def init(session: CommandSession):
         con = sqlite3.connect('bind_info.sqlite')
         cur = con.cursor()
         cur.execute(
-            'create table user(id INTEGER PRIMARY KEY AUTOINCREMENT,qq int UNIQUE,blog text,cid text,time_code text)')
+            'create table user(id INTEGER PRIMARY KEY AUTOINCREMENT,qq int UNIQUE,blog text,cid text,time_code text,'
+            'setting int)')
         cur.close()
         con.commit()
         con.close()
@@ -28,7 +29,8 @@ async def bind(session: CommandSession):
         qq = session.ctx.get('user_id')
         con = sqlite3.connect('bind_info.sqlite')
         cur = con.cursor()
-        cur.execute('insert into user(qq, blog, cid, time_code) values(?,?,?,?)', (qq, info[0], info[1], info[2]))
+        cur.execute('insert into user(qq, blog, cid, time_code, setting) values(?,?,?,?,?)',
+                    (qq, info[0], info[1], info[2], 0))
         cur.close()
         con.commit()
         con.close()
@@ -76,3 +78,21 @@ async def _(session: CommandSession):
     else:
         msg = f"[CQ:share,url={blog}]"
         await session.send(msg)
+
+
+@on_command('tu', aliases=('图床',))
+async def _(session: CommandSession):
+    qq = session.ctx.get('user_id')
+    setting = session.get('bind_info', prompt='使用QQ当图床请输入0\n使用时光机当图床请输入1')
+    try:
+        setting = int(setting)
+        con = sqlite3.connect('bind_info.sqlite')
+        cur = con.cursor()
+        cur.execute('update user set setting = ? where qq = ?', (setting, qq))
+        cur.close()
+        con.commit()
+        con.close()
+    except Exception as e:
+        await session.send('发生错误')
+    else:
+        await session.send('图床已更改')
