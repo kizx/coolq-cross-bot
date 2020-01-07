@@ -46,7 +46,7 @@ async def bind(session: CommandSession):
         await session.send('绑定成功')
 
 
-@on_command('unbind', aliases=('解绑', '解除绑定'))
+@on_command('unbind', aliases=('解绑', '解除绑定', '取消绑定'))
 async def unbind(session: CommandSession):
     qq = session.ctx.get('user_id')
     try:

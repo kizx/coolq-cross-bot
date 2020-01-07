@@ -55,7 +55,7 @@ async def get_price(game_id):
         cheap_price = root.xpath(path + "/following-sibling::td/text()")[0]
     except IndexError:
         return '输入的游戏id不对哟'
-    except:
+    except Exception:
         return '发生未知错误'
     else:
         return f"游戏名称：{name}\n当前价格：{current_price}\n史低价格：{cheap_price}"

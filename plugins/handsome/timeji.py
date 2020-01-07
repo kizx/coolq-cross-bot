@@ -2,8 +2,6 @@ from nonebot import on_command, CommandSession
 import requests
 import base64
 import sqlite3
-import asyncio
-import aiohttp
 
 
 @on_command('timeji', aliases=('时光鸡', '时光机', '时光姬', '动态', '说说'))
@@ -92,7 +90,7 @@ async def msg_port(msg, blog, cid, time_code):
 
 
 async def img_port(img_link, blog, time_code):
-    """上传图片到服务器并获得图片链接"""
+    """上传图片到博客服务器并获得图片链接"""
     print('[图片下载]...')
     response = requests.get(img_link)
     img_type = response.headers.get('Content-Type')
@@ -112,32 +110,6 @@ async def img_port(img_link, blog, time_code):
         return f'<img src="{img_url}"/>'
     else:
         return '图片上传失败'
-
-
-async def aioimg_port(img_link):
-    print('[图片下载]...')
-    async with aiohttp.ClientSession as session:
-        async with session.get(img_link) as response:
-            img_type = response.headers.get('Content-Type').split('/')
-            print('输出', img_type)
-            base64_data = base64.b64encode(await response.read()).decode()
-            img_base64 = f'data:{img_type};base64,{base64_data}'
-
-    url = blog
-    data = {'action': 'upload_img',
-            'time_code': time_code,
-            'token': 'qq',
-            'file': img_base64,
-            'mediaId': '1'}
-    print('[图片上传]...')
-    async with session.post(url, data=data) as response:
-        print('使出', response.json())
-        # if response.status == 200 and response.json().get('status') == '1':
-        #     img_url = response.json().get('data').replace('\\', '')
-        #     return f'<img src="{img_url}"/>'
-        # else:
-        #     return '图片上传失败'
-        return f'<img src="{response.json()}"/>'
 
 
 async def send_msg(session, msg):
