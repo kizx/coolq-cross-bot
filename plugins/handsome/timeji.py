@@ -1,18 +1,17 @@
 from nonebot import on_command, CommandSession
-import requests
 import base64
 import sqlite3
 import aiohttp
 
 
 @on_command('timeji', aliases=('时光鸡', '时光机', '时光姬', '动态', '说说'))
-async def timeji(session: CommandSession):
+async def timeji(session):
     msg = session.get('msg', prompt='请输入内容')
     await send_msg(session, msg)
 
 
 @timeji.args_parser
-async def _(session: CommandSession):
+async def _(session):
     stripped_arg = session.current_arg.strip()
     text, img_list = await msg_handle(session)
     msg = []
@@ -34,7 +33,7 @@ async def _(session: CommandSession):
 
 
 @on_command('multi', aliases=('开始',))
-async def multi(session: CommandSession):
+async def multi(session):
     session.state['texts'] = []
     session.state['imgs'] = []
     msg = session.get('msg', prompt='进入混合输入模式，请输入内容')
@@ -42,7 +41,7 @@ async def multi(session: CommandSession):
 
 
 @multi.args_parser
-async def _(session: CommandSession):
+async def _(session):
     stripped_arg = session.current_arg.strip()
     if session.is_first_run:
         return
@@ -83,34 +82,12 @@ async def msg_port(msg, blog, cid, time_code):
             'content': msg,
             'cid': cid,
             'action': 'send_talk'}
-    response = requests.post(url, data)
-    if response.status_code == 200 and response.text == '1':
-        return 'biubiubiu~发送成功'
-    else:
-        return '发送失败惹~'
-
-
-async def img_port(img_link, blog, time_code):
-    """上传图片到博客服务器并获得图片链接，由于不是异步的仅留作测试"""
-    print('[图片下载]...')
-    response = requests.get(img_link)
-    img_type = response.headers.get('Content-Type')
-    base64_data = base64.b64encode(response.content).decode()
-    img_base64 = f'data:{img_type};base64,{base64_data}'
-
-    url = blog
-    data = {'action': 'upload_img',
-            'time_code': time_code,
-            'token': 'qq',
-            'file': img_base64,
-            'mediaId': '1'}
-    print('[图片上传]...')
-    response = requests.post(url, data)
-    if response.status_code == 200 and response.json().get('status') == '1':
-        img_url = response.json().get('data').replace('\\', '')
-        return f'<img src="{img_url}"/>'
-    else:
-        return '图片上传失败'
+    async with aiohttp.ClientSession() as sess:
+        async with sess.post(url, data=data) as response:
+            if response.status == 200 and await response.text() == '1':
+                return 'biubiubiu~发送成功'
+            else:
+                return '发送失败惹~'
 
 
 async def asyimg_port(img_link, blog, time_code):
@@ -185,8 +162,8 @@ async def msg_handle(session):
                 img_list = [f'<img src="{url}"/>' for url in img_url]
             elif setting == 1:
                 img_list = [await asyimg_port(url, blog, time_code) for url in img_url]
-            elif setting == 9:
-                img_list = [await img_port(url, blog, time_code) for url in img_url]
+            # elif setting == 9:
+            #     img_list = [await img_port(url, blog, time_code) for url in img_url]
         except sqlite3.OperationalError:
             await session.send('[ERR11]你似乎还没有绑定呢~')
         except (TypeError, AttributeError):

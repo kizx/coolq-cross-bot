@@ -2,8 +2,8 @@ from nonebot import on_request, RequestSession
 
 
 @on_request('friend')
-async def _(session: RequestSession):
-    # 如果在群里就同意加好友
+async def _(session):
+    # 如果在我的群里就同意加好友
     group_id = 642739195
     qq = session.ctx['user_id']
     bot = session.bot

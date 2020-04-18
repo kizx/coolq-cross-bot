@@ -1,8 +1,9 @@
 from nonebot import on_command, CommandSession
 import os
 
-@on_command('imgdata', aliases=('清空缓存','删除缓存','清空图片缓存'))
-async def _(session: CommandSession):
+
+@on_command('imgdata', aliases=('清空缓存', '删除缓存', '清空图片缓存', '清空图片'))
+async def _(session):
     path = r'..\..\data\image'
     if os.path.exists(path):
         for i in os.listdir(path):
